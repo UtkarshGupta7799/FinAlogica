@@ -5,7 +5,7 @@ import pkg from "pg";
 dotenv.config();
 const { Pool } = pkg;
 
-const isProduction = process.env.NODE_ENV === 'production' || process.env.Render;
+const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER;
 export const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: isProduction ? { rejectUnauthorized: false } : false
