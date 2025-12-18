@@ -29,12 +29,12 @@ import { fileURLToPath } from "url";
 app.get("/setup-db", async (_, res) => {
     try {
         const __dirname = path.dirname(fileURLToPath(import.meta.url));
-        const rootDir = path.resolve(__dirname, "..");
+        // src/services/db.js -> src -> backend -> root (where db folder is)
+        const projectRoot = path.resolve(__dirname, "../..");
 
-        // Hardcoded schema for safety if file read fails to resolve paths relative to src correctly
-        // or just read from known location
-        const schemaSql = fs.readFileSync(path.join(rootDir, "db", "schema.sql"), "utf8");
-        const seedSql = fs.readFileSync(path.join(rootDir, "db", "seed.sql"), "utf8");
+        // On Render, structure matches repo. db is sibling of backend.
+        const schemaSql = fs.readFileSync(path.join(projectRoot, "db", "schema.sql"), "utf8");
+        const seedSql = fs.readFileSync(path.join(projectRoot, "db", "seed.sql"), "utf8");
 
         await pool.query(schemaSql);
         await pool.query(seedSql);
