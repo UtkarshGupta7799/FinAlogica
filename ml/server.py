@@ -9,6 +9,18 @@ from torchvision.models import mobilenet_v3_small, MobileNet_V3_Small_Weights
 
 app = FastAPI(title="FinAlogica ML Engine", version="1.0.0")
 
+# Limit threads for free tier environment
+torch.set_num_threads(1)
+
+@app.get("/")
+def read_root():
+    return {"message": "FinAlogica ML Service is running!"}
+
+@app.get("/health")
+def read_health():
+    return {"status": "ok"}
+
+
 with open("fish_labels.json", "r") as f:
     FISH_MAP = json.load(f)
 
