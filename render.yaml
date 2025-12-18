@@ -14,7 +14,7 @@ services:
           name: finalogica-db
           property: connectionString
       - key: ML_URL
-        value: http://finalogica-ml:10000
+        value: https://finalogica-ml.onrender.com
 
   # 2) Python ML Engine
   - type: web
