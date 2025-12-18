@@ -4,7 +4,7 @@ const baseUrl = import.meta.env.VITE_API_URL
 
 export const api = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl }),
+  baseQuery: fetchBaseQuery({ baseUrl: `${baseUrl}/api` }),
   endpoints: (builder) => ({
     listSpecies: builder.query({ query: () => '/species' }),
     predict: builder.mutation({
