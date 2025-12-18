@@ -23,7 +23,10 @@ services:
     plan: free
     buildCommand: cd ml && pip install -r requirements.txt
     startCommand: cd ml && uvicorn server:app --host 0.0.0.0 --port 10000
+    # Setting Python version prevents build issues with bleeding edge defaults
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
       - key: PORT
         value: 10000
 
