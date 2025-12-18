@@ -1,23 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useListSpeciesQuery, usePredictMutation, useRecommendQuery } from './app/services.js'
 
-const card = {
-  background: '#fff',
-  border: '1px solid #eaeaea',
-  borderRadius: '14px',
-  padding: '18px',
-  boxShadow: '0 4px 18px rgba(0,0,0,0.06)'
-}
-const btn = {
-  padding: '10px 16px',
-  borderRadius: '10px',
-  border: '1px solid #ddd',
-  cursor: 'pointer',
-  fontWeight: 600
-}
-const btnPrimary = { ...btn, background: '#2563eb', color: '#fff', border: '1px solid #1d4ed8' }
-const inputBox = { padding: '10px 12px', borderRadius: '10px', border: '1px solid #ddd', width: '100%' }
-
 export default function App() {
   const { data: species = [], isLoading: loadingSpecies } = useListSpeciesQuery()
   const [predict, { data: pred, isLoading: loadingPredict, error: predErr }] = usePredictMutation()
@@ -37,149 +20,228 @@ export default function App() {
     try {
       await predict(file).unwrap()
     } catch (e) {
-      // handled by RTK Query error state as well
+      // handled by RTK Query error state
     }
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f6f7fb', padding: '24px' }}>
-      <div style={{ maxWidth: 980, margin: '0 auto', fontFamily: 'Inter, system-ui, Arial' }}>
-        <header style={{ margin: '10px 0 24px' }}>
-          <h1 style={{ margin: 0, fontSize: 30 }}>🐟 FinAlogica</h1>
-          <div style={{ color: '#6b7280' }}>AI fish ID + weather-aware recommendations</div>
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Header */}
+        <header className="py-8 border-b border-slate-200 mb-8">
+          <div className="flex items-center gap-3">
+            <span className="text-4xl">🐟</span>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight text-slate-900">FinAlogica</h1>
+              <p className="text-sm text-slate-500 mt-1">AI-powered Fish Identification & Weather-Aware Recommendations</p>
+            </div>
+          </div>
         </header>
 
-        {/* Upload & Predict */}
-        <section style={{ ...card, marginBottom: 16 }}>
-          <h3 style={{ marginTop: 0 }}>1) Upload image & Predict</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <div>
-              <div style={{ marginBottom: 10 }}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  style={{ ...inputBox, padding: 8 }}
-                />
+          {/* Left Column: Actions */}
+          <div className="space-y-6">
+
+            {/* 1. Upload & Predict */}
+            <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="p-6 border-b border-slate-100 bg-slate-50/50">
+                <h3 className="text-lg font-semibold text-slate-800">1. Identify Fish</h3>
+                <p className="text-sm text-slate-500">Upload a photo to detect species</p>
               </div>
-              <button
-                style={file ? btnPrimary : { ...btnPrimary, opacity: 0.5, cursor: 'not-allowed' }}
-                disabled={!file || loadingPredict}
-                onClick={handlePredict}
-              >
-                {loadingPredict ? 'Predicting…' : 'Predict'}
-              </button>
 
-              {predErr && (
-                <div style={{ marginTop: 10, color: '#b91c1c' }}>
-                  Prediction failed. Open DevTools → Console/Network for details.
+              <div className="p-6 space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <label className="block">
+                      <span className="sr-only">Choose profile photo</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setFile(e.target.files?.[0] || null)}
+                        className="block w-full text-sm text-slate-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-blue-50 file:text-blue-700
+                          hover:file:bg-blue-100
+                          cursor-pointer
+                        "
+                      />
+                    </label>
+                    <button
+                      onClick={handlePredict}
+                      disabled={!file || loadingPredict}
+                      className={`
+                        w-full py-2.5 px-4 rounded-xl font-medium shadow-sm transition-all
+                        ${!file || loadingPredict
+                          ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                          : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md active:transform active:scale-95'
+                        }
+                      `}
+                    >
+                      {loadingPredict ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Analyzing...
+                        </span>
+                      ) : 'Analyze Image'}
+                    </button>
+                    {predErr && (
+                      <div className="p-3 bg-red-50 text-red-700 text-sm rounded-lg border border-red-100">
+                        Prediction failed. Check connection.
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Preview Area */}
+                  <div className="aspect-square bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden relative">
+                    {previewUrl ? (
+                      <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-slate-400 text-sm">No image selected</span>
+                    )}
+                  </div>
                 </div>
-              )}
-            </div>
 
-            <div>
-              <div style={{ ...card, padding: 12, background: '#fafafa' }}>
-                <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>Preview</div>
-                {previewUrl ? (
-                  <img src={previewUrl} alt="preview" style={{ maxWidth: '100%', borderRadius: 8 }} />
-                ) : (
-                  <div style={{ color: '#6b7280' }}>No image selected.</div>
+                {/* Result */}
+                {pred && (
+                  <div className="mt-4 animate-fade-in">
+                    <div className="p-4 bg-slate-900 rounded-xl text-slate-200 overflow-x-auto text-xs font-mono mb-3">
+                      <pre>{JSON.stringify(pred, null, 2)}</pre>
+                    </div>
+                    <div className="flex items-center gap-2 bg-green-50 text-green-800 p-4 rounded-xl border border-green-100">
+                      <span className="text-xl">🎯</span>
+                      <div className="font-medium">
+                        Identified as: <span className="font-bold text-green-900 uppercase">{top}</span>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
-            </div>
+            </section>
+
+            {/* 2. Recommendations */}
+            <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="p-6 border-b border-slate-100 bg-slate-50/50">
+                <h3 className="text-lg font-semibold text-slate-800">2. Smart Recommendations</h3>
+                <p className="text-sm text-slate-500">Based on species & local weather</p>
+              </div>
+
+              <div className="p-6">
+                {!top && (
+                  <div className="text-slate-500 text-sm italic mb-4 flex items-center gap-2">
+                    <span className="bg-slate-100 px-2 py-1 rounded text-xs">Info</span>
+                    Identify a fish first to unlock recommendations
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Latitude</label>
+                    <input
+                      type="number"
+                      step="0.0001"
+                      value={lat}
+                      onChange={(e) => setLat(parseFloat(e.target.value || '0'))}
+                      disabled={!top}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">Longitude</label>
+                    <input
+                      type="number"
+                      step="0.0001"
+                      value={lon}
+                      onChange={(e) => setLon(parseFloat(e.target.value || '0'))}
+                      disabled={!top}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-50"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  disabled={!top || loadingRec}
+                  onClick={() => refetch()}
+                  className={`
+                     w-full py-2.5 px-4 rounded-xl font-medium shadow-sm transition-all
+                     ${!top || loadingRec
+                      ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                      : 'bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-md'
+                    }
+                   `}
+                >
+                  {loadingRec ? 'Generating Insights...' : 'Get Recommendations'}
+                </button>
+
+                {recErr && (
+                  <div className="mt-4 p-3 bg-red-50 text-red-700 text-sm rounded-lg border border-red-100">
+                    Recommendation service unavailable.
+                  </div>
+                )}
+
+                {rec && (
+                  <div className="mt-6">
+                    <div className="p-4 bg-slate-900 rounded-xl text-slate-200 overflow-x-auto text-xs font-mono shadow-inner">
+                      <pre>{JSON.stringify(rec, null, 2)}</pre>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </section>
           </div>
 
-          {pred && (
-            <div style={{ marginTop: 14 }}>
-              <div style={{ fontWeight: 600, marginBottom: 8 }}>Prediction</div>
-              <div style={{ ...card, background: '#0b1324', color: '#e2e8f0', overflowX: 'auto' }}>
-                <pre style={{ margin: 0 }}>{JSON.stringify(pred, null, 2)}</pre>
+          {/* Right Column: Catalog */}
+          <div className="space-y-6">
+            <section className="bg-white rounded-2xl shadow-sm border border-slate-200 h-full max-h-[800px] flex flex-col">
+              <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-800">Species Catalog</h3>
+                  <p className="text-sm text-slate-500">Supported fish database</p>
+                </div>
+                <div className="text-xs bg-slate-200 px-2 py-1 rounded-full text-slate-600 font-medium">
+                  {species.length} species
+                </div>
               </div>
-              <div style={{ marginTop: 8 }}>
-                Top species: <strong>{top}</strong>
+
+              <div className="p-0 overflow-y-auto flex-1">
+                {loadingSpecies ? (
+                  <div className="p-8 text-center text-slate-400">Loading catalog...</div>
+                ) : (
+                  <ul className="divide-y divide-slate-100">
+                    {species.map(s => (
+                      <li key={s.id} className="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between group">
+                        <div>
+                          <p className="font-medium text-slate-700 group-hover:text-blue-600 transition-colors">{s.common_name}</p>
+                          <p className="text-xs text-slate-400 italic">{s.scientific_name}</p>
+                        </div>
+                        <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-300 group-hover:bg-blue-50 group-hover:text-blue-500">
+                          ➜
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
-            </div>
-          )}
-        </section>
-
-        {/* Recommendations */}
-        <section style={{ ...card, marginBottom: 16 }}>
-          <h3 style={{ marginTop: 0 }}>2) Location → Recommendations</h3>
-          {!top && (
-            <div style={{ color: '#6b7280', marginBottom: 8 }}>
-              Upload & predict first to enable recommendations.
-            </div>
-          )}
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 10 }}>
-            <div>
-              <label style={{ fontSize: 12, color: '#6b7280' }}>Latitude</label>
-              <input
-                type="number"
-                step="0.0001"
-                value={lat}
-                onChange={(e) => setLat(parseFloat(e.target.value || '0'))}
-                style={inputBox}
-                disabled={!top}
-              />
-            </div>
-            <div>
-              <label style={{ fontSize: 12, color: '#6b7280' }}>Longitude</label>
-              <input
-                type="number"
-                step="0.0001"
-                value={lon}
-                onChange={(e) => setLon(parseFloat(e.target.value || '0'))}
-                style={inputBox}
-                disabled={!top}
-              />
-            </div>
+            </section>
           </div>
 
-          <button
-            style={top ? btnPrimary : { ...btnPrimary, opacity: 0.5, cursor: 'not-allowed' }}
-            disabled={!top || loadingRec}
-            onClick={() => refetch()}
-          >
-            {loadingRec ? 'Getting recommendations…' : 'Get recommendations'}
-          </button>
+        </div>
 
-          {recErr && (
-            <div style={{ marginTop: 10, color: '#b91c1c' }}>
-              Recommendation failed. Backend might be down or ML not running.
-            </div>
-          )}
-
-          {rec && (
-            <div style={{ marginTop: 14 }}>
-              <div style={{ fontWeight: 600, marginBottom: 8 }}>Recommendations</div>
-              <div style={{ ...card, background: '#0b1324', color: '#e2e8f0', overflowX: 'auto' }}>
-                <pre style={{ margin: 0 }}>{JSON.stringify(rec, null, 2)}</pre>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {/* Species catalog */}
-        <section style={{ ...card }}>
-          <h3 style={{ marginTop: 0 }}>Species Catalog</h3>
-          {loadingSpecies ? (
-            <div>Loading species…</div>
-          ) : (
-            <ul style={{ margin: 0, paddingLeft: 18 }}>
-              {species.map(s => (
-                <li key={s.id}>
-                  {s.common_name} <span style={{ color: '#6b7280' }}>({s.scientific_name})</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <footer style={{ color: '#9ca3af', fontSize: 12, textAlign: 'center', marginTop: 18 }}>
-          API: http://localhost:4000/api &nbsp;|&nbsp; ML: http://localhost:8001
+        <footer className="mt-12 text-center text-slate-400 text-sm py-8 border-t border-slate-200">
+          <p className="mb-2">FinAlogica © 2024 • Local Demo</p>
+          <div className="flex justify-center gap-4 text-xs font-mono bg-slate-100 inline-block px-4 py-2 rounded-full mx-auto">
+            <span>API: :4000</span>
+            <span className="text-slate-300">|</span>
+            <span>ML: :8001</span>
+          </div>
         </footer>
+
       </div>
     </div>
   )

@@ -11,5 +11,30 @@
   ],
   "sturgeon": [
     "sturgeon"
+  ],
+  "anemone_fish": [
+    "anemone fish"
+  ],
+  "coho": [
+    "coho",
+    "coho salmon",
+    "silver salmon",
+    "salmon"
+  ],
+  "barracuda": [
+    "barra",
+    "barracouta"
+  ],
+  "gar": [
+    "gar",
+    "garfish"
+  ],
+  "lionfish": [
+    "lionfish"
+  ],
+  "puffer": [
+    "puffer",
+    "pufferfish",
+    "blowfish"
   ]
 }
