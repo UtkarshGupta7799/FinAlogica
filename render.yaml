@@ -13,11 +13,8 @@ services:
         fromDatabase:
           name: finalogica-db
           property: connectionString
-      - key: ML_SERVICE_URL
-        fromService:
-          type: web
-          name: finalogica-ml
-          property: url
+      - key: ML_URL
+        value: http://finalogica-ml:10000
 
   # 2) Python ML Engine
   - type: web
